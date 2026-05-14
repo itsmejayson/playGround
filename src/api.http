@@ -1,0 +1,30 @@
+### Get Users
+GET http://127.0.0.1:5055/users
+
+### Create User
+POST http://127.0.0.1:5055/users
+Content-Type: application/json
+
+{
+  "name": "erin",
+  "email": "erin2@example.com",
+  "password": "newpassword123"
+}
+
+### Delete User
+DELETE http://127.0.0.1:5055/users 
+Content-Type: application/json
+
+{
+  "email": "erin2@example.com"
+}
+
+### Update User
+PUT http://127.0.0.1:5055/users
+Content-Type: application/json
+
+{
+  "columnName": "password",
+  "email": "catherine@example.com",
+  "columnValue": "newpassword456"
+}
