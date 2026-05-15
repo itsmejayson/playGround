@@ -10,13 +10,18 @@ const checkAuth = () => {
   document.body.style.display = 'block';
 };
 
-checkAuth();
-
+let dataTable;
 
 const loadUsers = async () => {
   try {
+    showSkeleton();
     const res = await fetch('/users');
     const users = await res.json();
+
+    // ✅ destroy FIRST before changing DOM
+    if ($.fn.DataTable.isDataTable('#usersTable')) {
+      $('#usersTable').DataTable().destroy();
+    }
 
     const tableBody = document.getElementById('userTableBody');
     tableBody.innerHTML = '';
@@ -26,18 +31,44 @@ const loadUsers = async () => {
         <tr>
           <td>${user.name}</td>
           <td>${user.email}</td>
-          <td>
-            <button class="btn update-btn" onclick="updateUser('${user._id}')">Update</button>
-            <button class="btn delete-btn" onclick="deleteUser('${user._id}')">Delete</button>
+          <td class="text-end">
+
+            <button class="btn btn-warning btn-sm me-2" onclick="updateUser('${user._id}')">
+              <i class="bi bi-pencil"></i>
+            </button>
+
+            <button class="btn btn-danger btn-sm" onclick="deleteUser('${user._id}')">
+              <i class="bi bi-trash"></i>
+            </button>
+
           </td>
         </tr>
       `;
       tableBody.innerHTML += row;
     });
+    // ✅ reinitialize AFTER data is rendered
+    dataTable = $('#usersTable').DataTable({
+      responsive: true,
+      pageLength: 5,
+      lengthMenu: [5, 10, 20],
+      destroy: true // extra safety
+    });
 
   } catch (err) {
     console.error(err);
   }
+};
+
+const showSkeleton = () => {
+  const tableBody = document.getElementById('userTableBody');
+
+  tableBody.innerHTML = Array(5).fill(`
+    <tr>
+      <td><span class="placeholder col-6"></span></td>
+      <td><span class="placeholder col-8"></span></td>
+      <td class="text-end"><span class="placeholder col-4"></span></td>
+    </tr>
+  `).join('');
 };
 
 const deleteUser = async (id) => {
@@ -83,16 +114,28 @@ const updateUser = async (id) => {
     const { value: formValues } = await Swal.fire({
       title: 'Update User',
       html: `
-        <select id="column" class="swal2-input" style="width: 50%;"
-          onchange="
-            const input = document.getElementById('value');
-            input.value = '';
-            input.placeholder = this.value === 'email' ? 'Enter email' : 'Enter name';
-          ">
-          <option value="" disabled selected>Select field</option>
-          <option value="name">Name</option>
-          <option value="email">Email</option>
-        </select>
+            <select id="column" class="form-select mb-2"
+              onchange="
+                const input = document.getElementById('value');
+                input.value = '';
+
+                if (this.value === 'email') {
+                  input.type = 'email';
+                  input.placeholder = 'Enter email';
+                } else if (this.value === 'password') {
+                  input.type = 'password';
+                  input.placeholder = 'Enter password';
+                } else {
+                  input.type = 'text';
+                  input.placeholder = 'Enter name';
+                }
+              ">
+              
+              <option value="" disabled selected>Select field</option>
+              <option value="name">Name</option>
+              <option value="email">Email</option>
+              <option value="password">Password</option>
+            </select>
 
         <input id="value" class="swal2-input" placeholder="Enter value">
       `,
@@ -232,4 +275,8 @@ window.onpageshow = function (event) {
   }
 };
 
-window.onload = loadUsers;
+window.onload = () => {
+  checkAuth();   // your existing auth
+  loadLayout();  // ✅ NEW
+  loadUsers();   // your users
+};

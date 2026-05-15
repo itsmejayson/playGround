@@ -29,6 +29,11 @@ const handleLogin = async (event) => {
     });
 
     localStorage.setItem('isLoggedIn', 'true');
+    
+    // ✅ store user info (use name or email depending on your API)
+    localStorage.setItem('userName', data.user.name);
+    localStorage.setItem('userEmail', data.user.email);
+
     window.location.replace('/users.html');
 
   } catch (error) {

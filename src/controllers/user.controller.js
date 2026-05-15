@@ -134,7 +134,14 @@ exports.loginUser = async (req, res) => {
     }
 
     // 3. Send response
-    res.json({ message: "Login successful" });
+    res.json({
+      message: "Login successful",
+      user: {
+        name: existingUser.name,
+        email: existingUser.email,
+        id: existingUser._id
+      }
+    });
   } catch (error) {
     res.status(500).json({
       message: "Failed to login",
