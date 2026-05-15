@@ -16,7 +16,7 @@ DELETE http://127.0.0.1:5055/users
 Content-Type: application/json
 
 {
-  "email": "erin2@example.com"
+  "id": "6a0711b60df90172abaef73d"
 }
 
 ### Update User
@@ -27,4 +27,13 @@ Content-Type: application/json
   "columnName": "password",
   "email": "catherine@example.com",
   "columnValue": "newpassword456"
+}
+
+### Login User
+POST http://127.0.0.1:5055/users/login
+Content-Type: application/json
+
+{
+  "email": "jayson@example.com",
+  "password": "newpassword456"
 }

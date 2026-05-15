@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
       // password required only when creating user
       return this.isNew;
     },
-    select: false
+    select: true
   } 
 });
 

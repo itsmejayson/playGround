@@ -40,16 +40,16 @@ exports.createUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
-    const { email } = req.body;
+    const { id } = req.params
     // 1. Basic validation
-    if (!email) {
+    if (!id) {
       return res.status(400).json({
-        message: "Email is required"
+        message: "User ID is required"
       });
     }
 
     // 2. Check for existing user
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ _id: id });
     if (!existingUser) {
       return res.status(404).json({
         message: "User not found"
@@ -57,7 +57,7 @@ exports.deleteUser = async (req, res) => {
     }
 
     // 3. Delete user
-    await User.deleteOne({ email });
+    await User.deleteOne({ _id: id });
 
     // 4. Send response
     res.json({ message: "User deleted successfully" });
@@ -71,33 +71,74 @@ exports.deleteUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const { columnName, email, columnValue } = req.body;
+    const { id } = req.params;
+    const { columnName, columnValue } = req.body;
 
-    // 1. Basic validation
-    if (!email || !columnValue || !columnName) {
+    if (!id) {
       return res.status(400).json({
-        message: "Email, column value, and column name are required"
+        message: "User ID is required"
       });
     }
 
-    // 2. Check for existing user
-    const existingUser = await User.findOne({ email });
-    if (!existingUser) {
+    if (!columnName || !columnValue) {
+      return res.status(400).json({
+        message: "Missing columnName or columnValue"
+      });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { [columnName]: columnValue }, // ✅ FIXED
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
       return res.status(404).json({
         message: "User not found"
       });
     }
 
-    // 3. Update user
-    existingUser[columnName] = columnValue;
-    await existingUser.save();
+    console.log('UPDATED:', updatedUser);
 
-    // 4. Send response
-    res.json({ message: "User updated successfully" });
+    res.json({
+      message: "User updated successfully ✅",
+      data: updatedUser
+    });
+
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       message: "Failed to update user",
       error: error.message
     });
   }
 };
+
+exports.loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // 1. Basic validation
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Email and password are required"
+      });
+    }
+
+    // 2. Check for existing user
+    const existingUser = await User.findOne({ email });
+    if (!existingUser || existingUser.password !== password) {
+      return res.status(401).json({
+        message: "Invalid email or password"
+      });
+    }
+
+    // 3. Send response
+    res.json({ message: "Login successful" });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to login",
+      error: error.message
+    });
+  }
+}

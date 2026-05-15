@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<title>Login</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #f3f4f6;
+}
+
+/* ✅ NEW WRAPPER */
+.wrapper {
+  min-height: 100vh; /* ✅ fix jump */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  background: white;
+  padding: 30px 25px;
+  border-radius: 14px;
+
+  width: 100%;
+  max-width: 340px;
+
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+h2 {
+  text-align: center;
+  margin: 0 0 20px 0;
+}
+
+.input-group {
+  margin-bottom: 12px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+
+  border-radius: 10px;
+  border: 1px solid #ddd;
+
+  font-size: 14px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+
+  margin-top: 10px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #2563eb;
+  color: white;
+
+  font-size: 15px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+/* ✅ Better mobile spacing */
+@media (max-width: 400px) {
+  .card {
+    padding: 25px 15px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ✅ WRAPPER ADDED -->
+<div class="wrapper">
+  <div class="card">
+    <h2>Login</h2>
+
+    <form onsubmit="handleLogin(event)">
+      <div class="input-group">
+        <input type="email" name="email" placeholder="Email" required />
+      </div>
+
+      <div class="input-group">
+        <input type="password" name="password" placeholder="Password" required />
+      </div>
+
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
